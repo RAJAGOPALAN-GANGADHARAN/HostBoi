@@ -20,6 +20,7 @@ add_custom_target(copy-files ALL
    ${CMAKE_BINARY_DIR}/static
    )
 add_executable(HostBoi
+    enums.h
     handlers.h
     tcpthread.cpp
     controller.cpp

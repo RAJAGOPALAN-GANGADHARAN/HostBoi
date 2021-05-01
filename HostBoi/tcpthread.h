@@ -5,16 +5,11 @@
 #include <QTcpSocket>
 #include <QNetworkRequest>
 #include <QRegularExpression>
+#include "enums.h"
 
 using namespace std;
 
-enum RequestType{
-    GET,POST,
-    PUT,DELETE,
-    BAD
-};
-
-typedef function<void(QStringList,QTcpSocket*,RequestType)> handlerSignature;
+typedef function<pair<QString,ProcessType>(QStringList,QTcpSocket*,RequestType)> handlerSignature;
 typedef map<QString, handlerSignature> handlerMap;
 typedef vector<QRegularExpression> patternList;
 
@@ -39,10 +34,16 @@ private:
 
 class TcpThread : public QThread
 {
+    Q_OBJECT
 public:
     TcpThread(QTcpSocket*);
+    QTcpSocket* getSocket(){
+        //Should be removed
+        return tcpSocket;
+    }
     static void registerHandles(QString, handlerSignature);
-
+signals:
+    void isBridgeRequest(QString,TcpThread*);
 public slots:
     void handleReadyRead();
     void handleCloseConnection();

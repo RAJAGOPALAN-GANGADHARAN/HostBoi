@@ -33,7 +33,8 @@ pair<QString,QString> getPattern(QString header)
 void TcpThread::parseRequest(char* request)
 {
     QString dataStr(request);
-    auto splitList = dataStr.split("\r\n");
+    auto splitList = dataStr.split(CRLF,Qt::SkipEmptyParts);
+    qDebug()<<splitList;
     if(splitList.size()<=0)
     {
         qDebug()<<"[debug] Empty Request";
@@ -62,15 +63,25 @@ void TcpThread::parseRequest(char* request)
     }
     else
     {
-        qDebug()<<"[info] Bad Request";
-        type = BAD;
+        qDebug()<<"[info] No specific form found for the Request";
         return;
     }
 
     pair<QString,QString> urlPattern = getPattern(splitList[0]);
     if(HandlerMap::isPresent(urlPattern.first)){
         auto func = HandlerMap::getHandler(urlPattern.first);
-        func(splitList,tcpSocket,type);
+        auto resp = func(splitList,tcpSocket,type);
+        switch(resp.second)
+        {
+        case CREATE_ACTION:
+            emit isBridgeRequest(resp.first,this);
+            break;
+        case BRIDGE_ACTION:
+            emit bridgeAction();
+            break;
+        default:
+            qDebug()<<"[debug] No action to do";
+        }
     }
 }
 
@@ -93,6 +104,8 @@ void TcpThread::handleReadyRead()
 {
     qDebug()<<"[debug] Parsing request from client";
     QByteArray requestData = tcpSocket->readAll();
+    qDebug()<<"[info] Recieved Data:";
+    qDebug()<<requestData;
     parseRequest(requestData.data());
 }
 

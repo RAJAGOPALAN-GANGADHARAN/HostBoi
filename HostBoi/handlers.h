@@ -4,10 +4,9 @@
 #include <QStringList>
 #include <fstream>
 #include "tcpthread.h"
+#include "enums.h"
 
-#define CRLF "\r\n"
-#define BLANK "\n"
-#define handlerParam QStringList splitList,QTcpSocket* socket, RequestType type
+#define handlerParam [](QStringList splitList,QTcpSocket* socket, RequestType type)->pair<QString,ProcessType>
 
 using namespace std;
 
@@ -23,35 +22,87 @@ string readHtmlFile(string fileName)
     f.close();
     return html;
 }
-
-auto homeRequest = [](handlerParam){
-    string html = readHtmlFile("static/home.html");
-    string message = "";
+void setOkReponse(string& message){
     message.append("HTTP/1.1 200 OK");
     message.append(CRLF);
+}
+void setPlainType(string& message){
+    message.append("Content-Type: text/plain");
+    message.append(CRLF);
+}
+void setHtmlType(string& message){
     message.append("Content-Type: text/html;charset=UTF-8");
     message.append(CRLF);
+}
+void setContentLength(string& message,int size){
     message.append("Content-Length: ");
-    message.append(to_string(html.size()));
+    message.append(to_string(size));
+}
+void addBlanks(string& message){
     message.append(BLANK);
     message.append(BLANK);
+}
+
+string quickTextResponse(string text){
+    string message="";
+    setOkReponse(message);
+    setPlainType(message);
+    setContentLength(message,text.size());
+    addBlanks(message);
+    message.append(text);
+    return message;
+}
+
+string quickHtmlResponse(string fileName){
+    string html = readHtmlFile(fileName);
+    string message = "";
+
+    setOkReponse(message);
+    setHtmlType(message);
+    setContentLength(message,html.size());
+    addBlanks(message);
+
     message.append(html);
-
+    return message;
+}
+auto homeRequest = handlerParam{
+    string message = quickHtmlResponse("static/home.html");
     socket->write(message.c_str());
+    return {"",NO_ACTION};
 };
 
-auto badRequest = [](handlerParam){
-    char *bad = "HTTP/1.1 404 OK\nContent-Type: text/plain\nContent-Length: 11\n\nBad Request";
-    socket->write(bad);
+auto badRequest = handlerParam{
+    string badResponse = quickTextResponse("Bad Request!");
+    socket->write(badResponse.c_str());
+    return {"",NO_ACTION};
 };
 
-auto createRequest = [](handlerParam) {
+auto createRequest = handlerParam {
     if(type!=GET){
         qDebug()<<"[debug] Can't use other request type for create!";
-        return;
+        return {"",NO_ACTION};
     }
     qDebug()<<"[debug] create proxy instance";
+    return {"",NO_ACTION};
+};
 
+auto bridgeConnectService = handlerParam {
+    auto reqHead = splitList[0].split(" ");
+    auto uri = reqHead[1].split("/",Qt::SkipEmptyParts);
+    if(uri.size()!=3){
+        socket->write(quickTextResponse("Please use /HostBoi/create/<custom_sess> to create"\
+        "a bridge session").c_str());
+        return {"",NO_ACTION};
+    }
+    QString sess = uri.back();
+    string creatingReq = quickTextResponse("Creating a Session "+sess.toStdString()+", use "\
+    "/HostBoi/bridge/"+sess.toStdString()+" To bridge requests");
+    socket->write(creatingReq.c_str());
+    return {sess,CREATE_ACTION};
+};
+
+auto bridgeService = handlerParam {
+    return {"",BRIDGE_ACTION};
 };
 
 #endif // HANDLERS_H

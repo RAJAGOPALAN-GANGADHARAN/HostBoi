@@ -7,6 +7,8 @@ Controller::Controller(QObject *parent) : QObject(parent)
     TcpThread::registerHandles("^/home$",homeRequest);
     TcpThread::registerHandles("/404",badRequest);
     TcpThread::registerHandles("^/HostBoi/create$",createRequest);
+    TcpThread::registerHandles("^/HostBoi/connect/[a-zA-Z0-9_.-]*/$",bridgeConnectService);
+    TcpThread::registerHandles("^/HostBoi/bridge/[a-zA-Z0-9_.-]*/",bridgeService);
 }
 
 void Controller::startServer()
@@ -28,8 +30,19 @@ void Controller::handleNewConnection()
 {
     qDebug()<<"[debug] Incoming Connection";
     TcpThread* connectionThread = new TcpThread(httpServer->nextPendingConnection());
+    connect(connectionThread,&TcpThread::isBridgeRequest,
+            this,&Controller::handleBridgeRequest);
     connectionThread->start();
 
     qDebug()<<"[debug] Incoming connection started - Success";
 }
 
+void Controller::handleBridgeRequest(QString sess, TcpThread* tcpThread)
+{
+    qDebug()<<"[debug] Request to create instance with name:"<<sess;
+    if(connectionMap.find(sess)!=connectionMap.end()){
+        connectionMap[sess] = tcpThread;
+//        QString temp="Connected successfully "+sess;
+//        tcpThread->getSocket()->write(temp.toStdString().c_str());
+    }
+}
