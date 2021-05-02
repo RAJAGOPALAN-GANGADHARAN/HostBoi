@@ -1,10 +1,10 @@
 #include <QCoreApplication>
 #include <QTcpSocket>
-#include <mytcpsocket.h>
+#include <networkbridge.h>
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    MyTcpSocket s;
-    s.doConnect();
+    NetworkBridge bridge;
+    bridge.connectToServer("localhost");
     return a.exec();
 }
