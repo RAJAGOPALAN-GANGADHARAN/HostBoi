@@ -6,7 +6,7 @@
 #include "tcpthread.h"
 #include "enums.h"
 
-#define handlerParam [](QStringList splitList,QTcpSocket* socket, RequestType type)->pair<QString,ProcessType>
+#define handlerParam [](QString headerInfo,QString dataStr,QTcpSocket* socket, RequestType type)->pair<QString,ProcessType>
 
 using namespace std;
 
@@ -87,7 +87,7 @@ auto createRequest = handlerParam {
 };
 
 auto bridgeConnectService = handlerParam {
-    auto reqHead = splitList[0].split(" ");
+    auto reqHead = headerInfo.split(" ");
     auto uri = reqHead[1].split("/",Qt::SkipEmptyParts);
     if(uri.size()!=3){
         socket->write(quickTextResponse("Please use /HostBoi/create/<custom_sess> to create"\
@@ -95,14 +95,17 @@ auto bridgeConnectService = handlerParam {
         return {"",NO_ACTION};
     }
     QString sess = uri.back();
-    string creatingReq = quickTextResponse("Creating a Session "+sess.toStdString()+", use "\
-    "/HostBoi/bridge/"+sess.toStdString()+" To bridge requests");
-    socket->write(creatingReq.c_str());
     return {sess,CREATE_ACTION};
 };
 
 auto bridgeService = handlerParam {
-    return {"",BRIDGE_ACTION};
+    auto reqHead = headerInfo.split(" ");
+    auto uri = reqHead[1].split("/",Qt::SkipEmptyParts);
+    if(uri.size()>=3 && uri[0]=="HostBoi" && uri[1]=="bridge"){
+        QString sess = uri[2];
+        return {sess,BRIDGE_ACTION};
+    }
+    return {"",NO_ACTION};
 };
 
 #endif // HANDLERS_H

@@ -18,9 +18,12 @@ signals:
 public slots:
     void handleNewConnection();
     void handleBridgeRequest(QString,TcpThread*);
+    void handleBridgeMiddle(QString,QString,QTcpSocket*);
+    void handleBridgeReply(QString);
 
 private:
     map<QString, TcpThread*> connectionMap;
+    map<QString, QTcpSocket*> responseMap;
     QTcpServer* httpServer;
 };
 

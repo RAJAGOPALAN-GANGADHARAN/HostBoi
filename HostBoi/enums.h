@@ -7,7 +7,7 @@
 enum RequestType{
     GET,POST,
     PUT,DELETE,
-    BAD
+    BAD,RESPONSE
 };
 
 enum ProcessType{

@@ -9,7 +9,8 @@
 
 using namespace std;
 
-typedef function<pair<QString,ProcessType>(QStringList,QTcpSocket*,RequestType)> handlerSignature;
+typedef function<pair<QString,ProcessType>(QString,QString,
+                                           QTcpSocket*,RequestType)> handlerSignature;
 typedef map<QString, handlerSignature> handlerMap;
 typedef vector<QRegularExpression> patternList;
 
@@ -44,6 +45,9 @@ public:
     static void registerHandles(QString, handlerSignature);
 signals:
     void isBridgeRequest(QString,TcpThread*);
+    void bridgeRequest(QString,QString,QTcpSocket*);
+    void bridgeReply(QString);
+
 public slots:
     void handleReadyRead();
     void handleCloseConnection();

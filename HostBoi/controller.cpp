@@ -1,5 +1,6 @@
 #include "controller.h"
 #include "handlers.h"
+#include <QUuid>
 
 Controller::Controller(QObject *parent) : QObject(parent)
 {
@@ -32,17 +33,75 @@ void Controller::handleNewConnection()
     TcpThread* connectionThread = new TcpThread(httpServer->nextPendingConnection());
     connect(connectionThread,&TcpThread::isBridgeRequest,
             this,&Controller::handleBridgeRequest);
+    connect(connectionThread,&TcpThread::bridgeRequest,
+            this,&Controller::handleBridgeMiddle);
+    connect(connectionThread,&TcpThread::bridgeReply,
+            this,&Controller::handleBridgeReply);
+
     connectionThread->start();
 
     qDebug()<<"[debug] Incoming connection started - Success";
 }
 
+QString extractAndRemoveUuid(QString& data)
+{
+    static QString search=QString(BLANK)+QString(BLANK);
+    int pos = data.lastIndexOf(search);
+    QString uuid = data.right(data.size()-pos);
+
+    data = data.left(pos);
+    qDebug()<<"[info] After removing uuid:"<<data;
+    uuid.remove(0,2);
+    qDebug()<<"[info] Extracted uuid:"<<uuid;
+    return uuid;
+}
+
+void Controller::handleBridgeReply(QString data)
+{
+    QString uuid = extractAndRemoveUuid(data);
+    qDebug()<<"[debug] Bridge reply with uuid:"<<uuid;
+    if(responseMap.find(uuid)!=responseMap.end()){
+        responseMap[uuid]->write(data.toUtf8().constData());
+        qDebug()<<"[debug] Sent response to connection!";
+    }
+    else{
+        qDebug()<<"[debug]ERROR: Doesn't match Uuid of any connections";
+    }
+}
+
 void Controller::handleBridgeRequest(QString sess, TcpThread* tcpThread)
 {
     qDebug()<<"[debug] Request to create instance with name:"<<sess;
-    if(connectionMap.find(sess)!=connectionMap.end()){
+    if(connectionMap.find(sess)==connectionMap.end()){
         connectionMap[sess] = tcpThread;
-//        QString temp="Connected successfully "+sess;
-//        tcpThread->getSocket()->write(temp.toStdString().c_str());
+        QString message="Connected successfully "+sess;
+        //tcpThread->getSocket()->write(message.toStdString().c_str());
+    }
+}
+
+QString appendUUID(QString& dataStr)
+{
+    QString uuid = QUuid::createUuid().toString();
+    dataStr.append(BLANK);
+    dataStr.append(BLANK);
+    dataStr.append(uuid);
+    qDebug()<<"[info] Using uuid:"<<uuid<<" for current request";
+    //Use \n\nuuid
+    return uuid;
+}
+
+void Controller::handleBridgeMiddle(QString sess,QString dataStr,QTcpSocket* tcpSocket)
+{
+    qDebug()<<"[debug] Using Proxy service for session:"<<sess;
+    QString replace = QStringLiteral("/HostBoi/bridge/")+sess;
+    dataStr.replace(dataStr.indexOf(replace),replace.size(),QStringLiteral(""));
+    auto uuid = appendUUID(dataStr);
+    responseMap[uuid] = tcpSocket;
+    qDebug()<<"[info] Replaced Request:"<<dataStr;
+    if(connectionMap.find(sess) != connectionMap.end()){
+        connectionMap[sess]->getSocket()->write(dataStr.toStdString().c_str());
+    }
+    else{
+        qDebug()<<"[info] Can't find session";
     }
 }
