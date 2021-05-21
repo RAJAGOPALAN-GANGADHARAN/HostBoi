@@ -1,0 +1,77 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "HostBoi",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "HostBoi::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-HostBoi-Debug-cbc9ff1fedfac3b5fc4f.json",
+					"name" : "HostBoi",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "HostBoi_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-HostBoi_autogen-Debug-af46caaf18766cd5d529.json",
+					"name" : "HostBoi_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "copy-files::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-copy-files-Debug-dc333907ceb1f86276f3.json",
+					"name" : "copy-files",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/graju/Documents/OpenSource/HostBoi/build-HostBoi-Desktop_Qt_5_14_2_MinGW_64_bit-Debug",
+		"source" : "C:/Users/graju/Documents/OpenSource/HostBoi/HostBoi"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 2
+	}
+}
