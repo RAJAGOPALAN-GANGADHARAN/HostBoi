@@ -19,6 +19,7 @@ void Controller::startServer()
             this,&Controller::handleNewConnection);
 
     httpServer->listen(QHostAddress::Any, 80);
+    //httpServer->listen(QHostAddress("hostboi"),80);
     qDebug()<<"[debug] Attempting to start a server at port 80";
     if(httpServer->isListening())
         qDebug()<<"[debug] Server started successfully on port 80";
