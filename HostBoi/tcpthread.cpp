@@ -84,7 +84,10 @@ void TcpThread::parseRequest(char* request)
     }
     else
     {
-        qDebug()<<"[info] No specific form found for the Request";
+        qDebug()<<"[info] Http Response";
+        type = RESPONSE;
+        emit bridgeReply(dataStr);
+        //qDebug()<<"[info] No specific form found for the Request";
         return;
     }
 
@@ -115,6 +118,8 @@ TcpThread::TcpThread(QTcpSocket* socket)
             this,&TcpThread::handleReadyRead);
     connect(tcpSocket,&QTcpSocket::disconnected,
             this,&TcpThread::handleCloseConnection);
+    connect(tcpSocket, &QTcpSocket::bytesWritten,
+            this, &TcpThread::bytesReceived);
 }
 
 void TcpThread::registerHandles(QString str, handlerSignature f)
@@ -123,12 +128,16 @@ void TcpThread::registerHandles(QString str, handlerSignature f)
     HandlerMap::handlerMap_[str] = f;
 }
 
+void TcpThread::bytesReceived(qint64 bytes){
+    qDebug()<<"[debug] Recieved "<<bytes<<" from bridge";
+}
+
 void TcpThread::handleReadyRead()
 {
     qDebug()<<"[debug] Parsing request from client";
     QByteArray requestData = tcpSocket->readAll();
     qDebug()<<"[info] Recieved Data:";
-    qDebug()<<requestData;
+    qDebug()<<requestData.left(100);
     parseRequest(requestData.data());
 }
 

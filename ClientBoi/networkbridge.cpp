@@ -17,7 +17,7 @@ NetworkBridge::NetworkBridge(QObject *parent) : QObject(parent)
 
     //Test init
     targetHost="localhost";
-    targetPort="8000";
+    targetPort="1313";
     session="test";
 }
 
@@ -67,7 +67,7 @@ QString extractUuidAndRemove(QString& data)
     QString uuid = data.right(data.size()-pos);
 
     data = data.left(pos);
-    qDebug()<<"[info][client] After removing uuid:"<<data;
+    //qDebug()<<"[info][client] After removing uuid:"<<data;
     uuid.remove(0,2);
     qDebug()<<"[info][client] Extracted uuid:"<<uuid;
     return uuid;
@@ -76,24 +76,25 @@ void NetworkBridge::readyRead()
 {
     qDebug() << "[debug][client] Recieved data - reading";
     QString request = socket->readAll();
-    qDebug() << "[info][client]"<<request;
+    qDebug() << "[info][client]"<<request.left(100);
     if(!session.isEmpty() && !targetHost.isEmpty() && !targetPort.isEmpty()){
         QString uuid = extractUuidAndRemove(request);
-        if(!targetSocket)
+        if(targetSocketMap.find(uuid) == targetSocketMap.end())
         {
-            targetSocket = new TargetSocket(uuid);
-            connect(targetSocket,&TargetSocket::replyReady,
+            targetSocketMap[uuid] = new TargetSocket(uuid);
+            connect(targetSocketMap[uuid],&TargetSocket::replyReady,
                     this,&NetworkBridge::gotReply);
-            targetSocket->connectToTarget(targetHost,targetPort);
+            connect(targetSocketMap[uuid],&TargetSocket::notifyDestroy,
+                    this,&NetworkBridge::targetDisconnected);
+            targetSocketMap[uuid]->connectToTarget(targetHost,targetPort);
             qDebug()<<"[debug][client] Connection to target host sent";
         }
-        targetSocket->bridgeRequest(request);
+        targetSocketMap[uuid]->bridgeRequest(request);
         qDebug()<<"[debug][client] Request written to target host";
     }
 }
 
 void NetworkBridge::targetDisconnected()
 {
-    delete targetSocket;
-    targetSocket = nullptr;
+    qDebug()<<"[debug][client] Target Disconnected - deleting";
 }

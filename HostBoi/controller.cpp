@@ -45,12 +45,12 @@ void Controller::handleNewConnection()
 
 QString extractAndRemoveUuid(QString& data)
 {
+    qDebug()<<"[info] Before removing uuid:"<<data;
     static QString search=QString(BLANK)+QString(BLANK);
     int pos = data.lastIndexOf(search);
     QString uuid = data.right(data.size()-pos);
-
     data = data.left(pos);
-    qDebug()<<"[info] After removing uuid:"<<data;
+    qDebug()<<"[info] After removing uuid:"<<data.left(100);
     uuid.remove(0,2);
     qDebug()<<"[info] Extracted uuid:"<<uuid;
     return uuid;
@@ -75,6 +75,7 @@ void Controller::handleBridgeRequest(QString sess, TcpThread* tcpThread)
     if(connectionMap.find(sess)==connectionMap.end()){
         connectionMap[sess] = tcpThread;
         QString message="Connected successfully "+sess;
+        qDebug()<<"[debug]"<<message;
         //tcpThread->getSocket()->write(message.toStdString().c_str());
     }
 }
@@ -97,9 +98,10 @@ void Controller::handleBridgeMiddle(QString sess,QString dataStr,QTcpSocket* tcp
     dataStr.replace(dataStr.indexOf(replace),replace.size(),QStringLiteral(""));
     auto uuid = appendUUID(dataStr);
     responseMap[uuid] = tcpSocket;
-    qDebug()<<"[info] Replaced Request:"<<dataStr;
+    qDebug()<<"[info] Replaced Request:"<<dataStr.left(100);
     if(connectionMap.find(sess) != connectionMap.end()){
-        connectionMap[sess]->getSocket()->write(dataStr.toStdString().c_str());
+        qDebug()<<"[info] Sending to bridge session:"<<dataStr.toUtf8().size();
+        connectionMap[sess]->getSocket()->write(dataStr.toUtf8().constData());
     }
     else{
         qDebug()<<"[info] Can't find session";

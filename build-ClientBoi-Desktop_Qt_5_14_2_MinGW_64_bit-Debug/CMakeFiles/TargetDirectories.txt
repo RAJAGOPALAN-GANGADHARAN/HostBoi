@@ -1,0 +1,4 @@
+C:/Users/graju/Documents/OpenSource/HostBoi/build-ClientBoi-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/CMakeFiles/edit_cache.dir
+C:/Users/graju/Documents/OpenSource/HostBoi/build-ClientBoi-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/CMakeFiles/ClientBoi.dir
+C:/Users/graju/Documents/OpenSource/HostBoi/build-ClientBoi-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/CMakeFiles/rebuild_cache.dir
+C:/Users/graju/Documents/OpenSource/HostBoi/build-ClientBoi-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/CMakeFiles/ClientBoi_autogen.dir

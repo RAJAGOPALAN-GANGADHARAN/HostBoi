@@ -3,10 +3,11 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <map>
 #include "constants.h"
 
 class TargetSocket;
-
+using namespace std;
 class NetworkBridge : public QObject
 {
     Q_OBJECT
@@ -31,5 +32,6 @@ private:
     QString targetPort;
     QString session;
     QString basePrefix;
+    map<QString,TargetSocket*> targetSocketMap;
 };
 #endif // NETWORKBRIDGE_H

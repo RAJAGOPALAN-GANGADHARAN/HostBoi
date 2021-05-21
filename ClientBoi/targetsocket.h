@@ -14,6 +14,7 @@ public:
     void bridgeRequest(QString);
 signals:
     void replyReady(QString);
+    void notifyDestroy();
 
 public slots:
     void connected();

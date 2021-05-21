@@ -1,0 +1,19 @@
+# ninja log v5
+5	56	0	CMakeFiles/ClientBoi_autogen	e1ed368aa9baf7a4
+5	56	0	ClientBoi_autogen/mocs_compilation.cpp	e1ed368aa9baf7a4
+464	2434	6433159965292173	CMakeFiles/ClientBoi.dir/main.cpp.obj	6acc7b78ec4377ac
+455	2436	6433159965272177	CMakeFiles/ClientBoi.dir/ClientBoi_autogen/mocs_compilation.cpp.obj	53b9973bd32fb11c
+56	1750	6433164634026805	CMakeFiles/ClientBoi.dir/networkbridge.cpp.obj	72929d75a1ed08de
+1751	2058	6433164637155352	ClientBoi.exe	2234be20d3b6a347
+47	1128	6415781936271148	CMakeFiles/ClientBoi.dir/mytcpsocket.cpp.obj	5a01af7cf5e8ed4f
+57	1580	6433162622150637	CMakeFiles/ClientBoi.dir/targetsocket.cpp.obj	8a2bf488510d0fdb
+6	64	0	CMakeFiles/ClientBoi_autogen	e1ed368aa9baf7a4
+6	64	0	ClientBoi_autogen/mocs_compilation.cpp	e1ed368aa9baf7a4
+64	1890	6433169564123182	CMakeFiles/ClientBoi.dir/networkbridge.cpp.obj	72929d75a1ed08de
+6	50	0	CMakeFiles/ClientBoi_autogen	e1ed368aa9baf7a4
+6	50	0	ClientBoi_autogen/mocs_compilation.cpp	e1ed368aa9baf7a4
+51	295	6433169598116036	ClientBoi.exe	2234be20d3b6a347
+6	52	0	CMakeFiles/ClientBoi_autogen	e1ed368aa9baf7a4
+6	52	0	ClientBoi_autogen/mocs_compilation.cpp	e1ed368aa9baf7a4
+52	1470	6433170306740183	CMakeFiles/ClientBoi.dir/targetsocket.cpp.obj	8a2bf488510d0fdb
+1471	1708	6433170309196894	ClientBoi.exe	2234be20d3b6a347

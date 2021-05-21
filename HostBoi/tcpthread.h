@@ -51,6 +51,7 @@ signals:
 public slots:
     void handleReadyRead();
     void handleCloseConnection();
+    void bytesReceived(qint64);
 
 private:
     void parseRequest(char* request);
