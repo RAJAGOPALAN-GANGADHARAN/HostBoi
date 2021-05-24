@@ -42,9 +42,8 @@ pair<QString,QString> getPattern(QString header)
     return {"/404","/404"};
 }
 
-void TcpThread::parseRequest(char* request)
+void TcpThread::parseRequest(QByteArray dataStr)
 {
-    QString dataStr(request);
     int index = dataStr.indexOf(CRLF);
     if(index==-1)
     {
@@ -138,7 +137,7 @@ void TcpThread::handleReadyRead()
     QByteArray requestData = tcpSocket->readAll();
     qDebug()<<"[info] Recieved Data:";
     qDebug()<<requestData.left(100);
-    parseRequest(requestData.data());
+    parseRequest(requestData);
 }
 
 

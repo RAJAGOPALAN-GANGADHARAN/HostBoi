@@ -22,7 +22,7 @@ public slots:
     void disconnected();
     void bytesWritten(qint64 bytes);
     void readyRead();
-    void gotReply(QString);
+    void gotReply(QByteArray);
     void targetDisconnected();
 
 private:

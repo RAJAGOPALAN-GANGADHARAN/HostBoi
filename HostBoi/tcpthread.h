@@ -46,7 +46,7 @@ public:
 signals:
     void isBridgeRequest(QString,TcpThread*);
     void bridgeRequest(QString,QString,QTcpSocket*);
-    void bridgeReply(QString);
+    void bridgeReply(QByteArray);
 
 public slots:
     void handleReadyRead();
@@ -54,7 +54,7 @@ public slots:
     void bytesReceived(qint64);
 
 private:
-    void parseRequest(char* request);
+    void parseRequest(QByteArray);
     QTcpSocket* tcpSocket;
 };
 

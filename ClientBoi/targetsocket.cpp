@@ -51,25 +51,26 @@ void appendUUIDToArray(QByteArray& array,QString uuid){
 void TargetSocket::readyRead()
 {
     qDebug() << "[debug][target] Recieved data - reading";
-    QString response = targetSocket->readAll();
-    qDebug() << "[info][target]"<<response.left(100);
-    QByteArray respArr = response.toUtf8();
+    QByteArray response = targetSocket->readAll();
+    //qDebug() << "[info][target]"<<response;
+    //QByteArray respArr = response.toUtf8();
+    QByteArray respArr = response;
     if(respArr.size()>=64000)
     {
         //greater than tcp socket read buffer size
         //so split into chunks
         QByteArray leftArr = respArr.left(64000);
         appendUUIDToArray(leftArr,uuid);
-        emit replyReady(leftArr.constData());
+        emit replyReady(leftArr);
         QByteArray rightArr = respArr.right(respArr.size()-64000);
         appendUUIDToArray(rightArr,uuid);
-        emit replyReady(rightArr.constData());
+        emit replyReady(rightArr);
     }
     else
     {
         appendUUIDToArray(respArr,uuid);
-        emit replyReady(respArr.constData());
+        emit replyReady(respArr);
     }
-    //qDebug()<<"[info][target] Attaching uuid to data:"<<uuid<<"\n"<<response;
+    qDebug()<<"[info][target] Attaching uuid to data:"<<uuid<<"\n"<<response;
 
 }

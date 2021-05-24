@@ -19,11 +19,12 @@ public slots:
     void handleNewConnection();
     void handleBridgeRequest(QString,TcpThread*);
     void handleBridgeMiddle(QString,QString,QTcpSocket*);
-    void handleBridgeReply(QString);
+    void handleBridgeReply(QByteArray);
 
 private:
     map<QString, TcpThread*> connectionMap;
     map<QString, QTcpSocket*> responseMap;
+    map<QString, QString> idSessMap;
     QTcpServer* httpServer;
 };
 

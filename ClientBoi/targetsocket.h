@@ -13,7 +13,7 @@ public:
     void connectToTarget(QString,QString);
     void bridgeRequest(QString);
 signals:
-    void replyReady(QString);
+    void replyReady(QByteArray);
     void notifyDestroy();
 
 public slots:

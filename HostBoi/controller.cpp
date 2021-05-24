@@ -1,6 +1,7 @@
 #include "controller.h"
 #include "handlers.h"
 #include <QUuid>
+#include <QTextCodec>
 
 Controller::Controller(QObject *parent) : QObject(parent)
 {
@@ -44,7 +45,7 @@ void Controller::handleNewConnection()
     qDebug()<<"[debug] Incoming connection started - Success";
 }
 
-QString extractAndRemoveUuid(QString& data)
+QString extractAndRemoveUuid(QByteArray& data)
 {
     qDebug()<<"[info] Before removing uuid:"<<data;
     static QString search=QString(BLANK)+QString(BLANK);
@@ -56,13 +57,24 @@ QString extractAndRemoveUuid(QString& data)
     qDebug()<<"[info] Extracted uuid:"<<uuid;
     return uuid;
 }
-
-void Controller::handleBridgeReply(QString data)
+QString replaceRelativeLinks(QByteArray& data)
+{
+    //QString dataStr = QTextCodec::codecForMib(1015)->toUnicode(data);
+    QString dataStr = QString::fromLocal8Bit(data);
+    dataStr.replace(QRegExp("href=\\s*[\"]\\s*\\/"), "href=\"");
+    dataStr.replace(QRegExp("href=\\s*[']\\s*\\/"), "href='");
+    dataStr.replace(QRegExp("src=\\s*[\"]\\s*\\/"), "src=\"");
+    dataStr.replace(QRegExp("src=\\s*[']\\s*\\/"), "src='");
+    return dataStr;
+}
+void Controller::handleBridgeReply(QByteArray data)
 {
     QString uuid = extractAndRemoveUuid(data);
     qDebug()<<"[debug] Bridge reply with uuid:"<<uuid;
     if(responseMap.find(uuid)!=responseMap.end()){
-        responseMap[uuid]->write(data.toUtf8().constData());
+        //replaceRelativeLinks(data);
+        //responseMap[uuid]->write(data.toUtf8().constData());
+        responseMap[uuid]->write(data);
         qDebug()<<"[debug] Sent response to connection!";
     }
     else{
@@ -99,6 +111,7 @@ void Controller::handleBridgeMiddle(QString sess,QString dataStr,QTcpSocket* tcp
     dataStr.replace(dataStr.indexOf(replace),replace.size(),QStringLiteral(""));
     auto uuid = appendUUID(dataStr);
     responseMap[uuid] = tcpSocket;
+    idSessMap[uuid] = sess;
     qDebug()<<"[info] Replaced Request:"<<dataStr.left(100);
     if(connectionMap.find(sess) != connectionMap.end()){
         qDebug()<<"[info] Sending to bridge session:"<<dataStr.toUtf8().size();

@@ -55,10 +55,10 @@ void NetworkBridge::bytesWritten(qint64 bytes)
     qDebug() <<"[debug][client]"<< bytes << " bytes written.";
 }
 
-void NetworkBridge::gotReply(QString reply)
+void NetworkBridge::gotReply(QByteArray reply)
 {
     qDebug()<<"[debug][client] Sending reply back via bridge";
-    socket->write(reply.toUtf8().constData());
+    socket->write(reply);
 }
 QString extractUuidAndRemove(QString& data)
 {
