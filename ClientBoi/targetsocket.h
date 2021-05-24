@@ -1,15 +1,15 @@
 #ifndef TARGETSOCKET_H
 #define TARGETSOCKET_H
 
-#include <QObject>
+#include <QThread>
 #include <QTcpSocket>
 #include "constants.h"
 
-class TargetSocket : public QObject
+class TargetSocket : public QThread
 {
     Q_OBJECT
 public:
-    explicit TargetSocket(QString,QObject *parent = nullptr);
+    explicit TargetSocket(QString);
     void connectToTarget(QString,QString);
     void bridgeRequest(QString);
 signals:

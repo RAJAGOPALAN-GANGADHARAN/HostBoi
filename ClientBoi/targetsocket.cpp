@@ -1,6 +1,6 @@
 #include "targetsocket.h"
 
-TargetSocket::TargetSocket(QString uuid,QObject *parent) : QObject(parent)
+TargetSocket::TargetSocket(QString uuid) 
 {
     targetSocket = new QTcpSocket(this);
     this->uuid = uuid;

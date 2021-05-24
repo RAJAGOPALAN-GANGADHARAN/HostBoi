@@ -86,7 +86,10 @@ void NetworkBridge::readyRead()
                     this,&NetworkBridge::gotReply);
             connect(targetSocketMap[uuid],&TargetSocket::notifyDestroy,
                     this,&NetworkBridge::targetDisconnected);
+            
+            targetSocketMap[uuid]->start();
             targetSocketMap[uuid]->connectToTarget(targetHost,targetPort);
+            
             qDebug()<<"[debug][client] Connection to target host sent";
         }
         targetSocketMap[uuid]->bridgeRequest(request);
